@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - FinanciallyFit</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 1em;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.5em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .google-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #4285F4;
+            color: white;
+            padding: 0.5em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .google-btn img {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .google-btn:hover {
+            background-color: #357ae8;
+        }
+        .link {
+            text-align: center;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" required>
+        </div>
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+        </div>
+        <div class="input-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+        </div>
+        <div class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" required>
+        </div>
+        <button class="btn" onclick="signUp()">Sign Up</button>
+        <div class="link">
+            <a href="signin.html">Already have an account? Sign In</a>
+        </div>
+        <hr>
+        <button class="google-btn" onclick="googleSignIn()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign up with Google
+        </button>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+
+        // Sign up with email and password
+        function signUp() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+
+                    // Update the user's profile with additional information
+                    user.updateProfile({
+                        displayName: username,
+                        phoneNumber: phone
+                    }).then(() => {
+                        alert('User signed up successfully!');
+                    }).catch(error => {
+                        alert(error.message);
+                    });
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+
+        // Google sign-in
+        function googleSignIn() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+
+            auth.signInWithPopup(provider)
+                .then(result => {
+                    alert('User signed up with Google!');
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+    </script>
+</body>
+</html>
+
